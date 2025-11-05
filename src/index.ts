@@ -1,13 +1,6 @@
 import districts from "school-districts";
 import { XMLParser } from "fast-xml-parser";
 
-const build = (object: Record<string, string>) => {
-  const params = new URLSearchParams();
-  for (const [key, value] of Object.entries(object)) {
-    params.set(key, value);
-  }
-  return params;
-};
 const parser = new XMLParser({ ignoreAttributes: false });
 
 // the function is intentionally anonymous, because you probably want to wrap it
@@ -17,6 +10,14 @@ export default async (
   onInvalidAuth: () => never,
   methodName: string,
   params: Record<string, string> = {},
+  specificFetch: (
+    url: string,
+    args: {
+      method: string;
+      body: URLSearchParams;
+      headers: Record<string, string>;
+    },
+  ) => Promise<Response> = fetch,
 ) => {
   const domain = email.split("@")[1];
   const district = districts[domain];
@@ -30,7 +31,7 @@ export default async (
 
   const userID = email.split("@")[0];
 
-  const request = build({
+  const request = new URLSearchParams({
     userID,
     password,
     skipLoginLog: "true",
@@ -42,7 +43,7 @@ export default async (
       .join("")}</Parms>`,
   });
 
-  const response = await fetch(
+  const response = await specificFetch(
     `${base}/Service/PXPCommunication.asmx/ProcessWebServiceRequest`,
     {
       method: "POST",
@@ -56,7 +57,7 @@ export default async (
   const dataChunked = dataWrap.split(
     `<string xmlns="http://edupoint.com/webservices/">`,
   );
-  if (dataChunked.length != 1) {
+  if (dataChunked.length != 2) {
     throw new Error(
       `StudentVue error: malformed response (status ${response.status})`,
       {
