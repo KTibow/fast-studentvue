@@ -1,6 +1,6 @@
 {
   "name": "fast-studentvue",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "type": "module",
   "license": "MIT",
   "repository": {
@@ -21,8 +21,8 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "tsdown",
     "dev": "tsdown --watch",
+    "prepublish": "tsdown",
     "test": "vitest",
     "typecheck": "tsc --noEmit"
   },
