@@ -50,6 +50,7 @@ export default async (
       body: request,
       headers: {
         "content-type": "application/x-www-form-urlencoded",
+        "user-agent": "fast-studentvue",
       },
     },
   );
