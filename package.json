@@ -22,7 +22,7 @@
   },
   "scripts": {
     "dev": "tsdown --watch",
-    "prepublish": "tsdown",
+    "prepack": "tsdown",
     "test": "vitest",
     "typecheck": "tsc --noEmit"
   },
