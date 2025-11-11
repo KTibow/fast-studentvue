@@ -3,6 +3,19 @@ import { XMLParser } from "fast-xml-parser";
 
 const parser = new XMLParser({ ignoreAttributes: false });
 
+export const getStudentVueBase = (email: string) => {
+  const domain = email.split("@")[1];
+  const apps = districtApps[domain];
+  if (!apps) {
+    throw new Error("Unknown domain");
+  }
+  const studentvue = apps.find((a) => a.app == "StudentVue");
+  if (!studentvue) {
+    throw new Error("District does not use StudentVue");
+  }
+  return studentvue.base;
+};
+
 // the function is intentionally anonymous, because you probably want to wrap it
 // (eg use monoidentity's getLoginRecognized() and relog)
 export default async (
@@ -19,16 +32,7 @@ export default async (
     },
   ) => Promise<Response> = fetch,
 ) => {
-  const domain = email.split("@")[1];
-  const apps = districtApps[domain];
-  if (!apps) {
-    throw new Error("Unknown domain");
-  }
-  const base = apps.find((a) => a.app == "StudentVue")?.base;
-  if (!base) {
-    throw new Error("District does not use StudentVue");
-  }
-
+  const base = getStudentVueBase(email);
   const userID = email.split("@")[0];
 
   const request = new URLSearchParams({
